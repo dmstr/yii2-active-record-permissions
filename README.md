@@ -1,4 +1,4 @@
-# Yii _____
+# Yii 2 Active Record Access Permissions
 
 The package ...
 
