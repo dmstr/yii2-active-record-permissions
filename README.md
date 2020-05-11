@@ -1,6 +1,6 @@
 # Yii 2 Active Record Access Permissions
 
-The package ...
+The package has been extracted from https://github.com/dmstr/yii2-db
 
 ## Installation
 
