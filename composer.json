@@ -1,5 +1,5 @@
 {
-    "name": "dmstr/_____",
+    "name": "dmstr/yii2-active-record-permissions",
     "type": "library",
     "description": "_____",
     "keywords": [
@@ -10,7 +10,8 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": "^7.4"
+        "php": "^7.4",
+        "yiisoft/yii2": "^2.0.35"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0",
@@ -18,12 +19,12 @@
     },
     "autoload": {
         "psr-4": {
-            "dmstr\\_____\\": "src"
+            "dmstr\\activeRecordPermissions\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "dmstr\\_____\\tests\\": "tests"
+            "dmstr\\activeRecordPermissions\\tests\\": "tests"
         }
     },
     "extra": {
