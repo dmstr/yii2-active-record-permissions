@@ -14,7 +14,7 @@ The package ...
 Traits
 ---
 
-### [dmstr\db\traits\ActiveRecordAccessTrait](https://github.com/dmstr/yii2-db/blob/master/db/traits/ActiveRecordAccessTrait.php)
+### [dmstr\activeRecordPermissions\ActiveRecordAccessTrait](https://github.com/dmstr/yii2-db/blob/master/db/traits/ActiveRecordAccessTrait.php)
 
 **Option 1:**
 
@@ -34,7 +34,7 @@ This migrations adds the available access check columns to your database table(s
 'access_domain',
 ```
 
-- Add `use \dmstr\db\traits\ActiveRecordAccessTrait;` to your active record model
+- Add `use \dmstr\activeRecordPermissions\ActiveRecordAccessTrait;` to your active record model
 
 - *(update your cruds)*
 

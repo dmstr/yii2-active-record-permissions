@@ -9,7 +9,7 @@
 namespace dmstr\activeRecordPermissions;
 
 
-use dmstr\db\traits\ActiveRecordAccessTrait;
+use dmstr\activeRecordPermissions\ActiveRecordAccessTrait;
 use dmstr\modules\redirect\models\ActiveRecord;
 use kartik\select2\Select2;
 use yii\base\Widget;
