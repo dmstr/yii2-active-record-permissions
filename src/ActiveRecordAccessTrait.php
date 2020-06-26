@@ -13,8 +13,6 @@ use Yii;
 use dmstr\db\exceptions\UnsupportedDbException;
 use yii\console\Application as ConsoleApplication;
 use yii\helpers\StringHelper;
-use yii\helpers\VarDumper;
-
 
 /**
  * Trait ActiveRecordAccessTrait
