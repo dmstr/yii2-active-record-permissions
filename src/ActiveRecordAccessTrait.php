@@ -14,7 +14,6 @@ use dmstr\db\exceptions\UnsupportedDbException;
 use yii\console\Application as ConsoleApplication;
 use yii\helpers\StringHelper;
 
-
 /**
  * Trait ActiveRecordAccessTrait
  *
@@ -34,6 +33,12 @@ trait ActiveRecordAccessTrait
      * @var bool
      */
     public static $activeAccessTrait = true;
+
+    /**
+     * Enable/disable recursive role check
+     * @var bool
+     */
+    public static $enableRecursiveRoles = false;
 
     /**
      * Public / all access
@@ -139,9 +144,9 @@ trait ActiveRecordAccessTrait
             }
 
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
@@ -165,9 +170,9 @@ trait ActiveRecordAccessTrait
             }
 
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
@@ -200,11 +205,23 @@ trait ActiveRecordAccessTrait
                 $authManager = \Yii::$app->authManager;
                 $authItems = [];
 
-                if (Yii::$app->user->can('Admin')) {
-                    $roles = $authManager->getRoles();
+                $allRoles = $authManager->getRoles();
+                if (static::$enableRecursiveRoles === false) {
+                    if (Yii::$app->user->can('Admin')) {
+                        $roles = $allRoles;
+                    } else {
+                        $roles = $authManager->getRolesByUser(Yii::$app->user->id);
+                    }
                 } else {
-                    $roles = $authManager->getRolesByUser(Yii::$app->user->id);
+                    $roles = [];
+                    foreach ($allRoles as $roleItem) {
+                        $roleName = $roleItem->name;
+                        if (Yii::$app->user->can($roleName)) {
+                            $roles[$roleName] = $roleItem;
+                        }
+                    }
                 }
+
 
                 foreach ($roles as $name => $item) {
                     $authItems[$name] = $name . ' (' . $item->description . ')';
