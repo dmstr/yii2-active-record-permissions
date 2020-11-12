@@ -206,7 +206,8 @@ trait ActiveRecordAccessTrait
                 $authItems = [];
 
                 $allRoles = $authManager->getRoles();
-                if (static::$enableRecursiveRoles === false) {
+
+                if (static::isEnabledRecursiveRoles()) {
                     if (Yii::$app->user->can('Admin')) {
                         $roles = $allRoles;
                     } else {
@@ -237,6 +238,12 @@ trait ActiveRecordAccessTrait
         return $publicAuthItem;
     }
 
+    /**
+     * @return bool|mixed
+     */
+    public static function isEnabledRecursiveRoles () {
+        return Yii::$app->params['ActiveRecordAccessTrait']['enableRecursiveRoles'] ?? static::$enableRecursiveRoles;
+    }
 
     public static function getDefaultAccessDomain() {
         // return first found permission
