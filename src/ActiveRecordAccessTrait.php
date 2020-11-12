@@ -207,13 +207,16 @@ trait ActiveRecordAccessTrait
 
                 $allRoles = $authManager->getRoles();
 
-                if (static::isEnabledRecursiveRoles()) {
+                if (!static::isEnabledRecursiveRoles()) {
                     if (Yii::$app->user->can('Admin')) {
+                        // when user is 'Admin' use all roles
                         $roles = $allRoles;
                     } else {
+                        // only use directly assigned roles
                         $roles = $authManager->getRolesByUser(Yii::$app->user->id);
                     }
                 } else {
+                    // check all roles
                     $roles = [];
                     foreach ($allRoles as $roleItem) {
                         $roleName = $roleItem->name;
