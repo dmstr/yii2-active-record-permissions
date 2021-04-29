@@ -8,6 +8,10 @@ The package has been extracted from https://github.com/dmstr/yii2-db
 
 ## General usage
 
+### Configuration options
+
+`enableRecursiveRoles`
+
 ### Example
 
 
@@ -48,6 +52,19 @@ Permissions to set default values
 
 - `access.defaults.accessDomain:global`
 - `access.defaults.updateDelete:<ROLE>`
+
+Add rule for default value in `Model::rules()`, if you want to set it automatically
+
+```
+[
+    [
+        'access_update',
+        'access_delete',
+    ],
+    'default',
+    'value' => self::getDefaultAccessUpdateDelete()
+],
+```
 
 **Option 2:**
 
