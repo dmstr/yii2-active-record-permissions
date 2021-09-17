@@ -85,7 +85,7 @@ trait ActiveRecordAccessTrait
             $accessOwnerCheck = false;
             if ($accessOwner && !\Yii::$app->user->isGuest) {
                 $accessOwnerCheck = true;
-                $query->where([$accessOwner => \Yii::$app->user->id]);
+                $query->where([$accessOwner => (string)Yii::$app->user->id]);
             }
 
             // access read check
