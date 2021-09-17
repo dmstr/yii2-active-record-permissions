@@ -381,7 +381,7 @@ trait ActiveRecordAccessTrait
      * Return correct part of check in set  query for current DB
      * @param $accessRead
      * @param $authItems
-     * @return string
+     * @return string|array
      */
     private static function getInSetQueryPart($accessRead, $authItems)
     {
@@ -390,7 +390,7 @@ trait ActiveRecordAccessTrait
             case 'mysql':
                 return 'FIND_IN_SET(' . $accessRead . ', "' . $authItems . '") > 0';
             case 'pgsql':
-                return " '" . $accessRead . "'= SOME (string_to_array('$authItems', ','))";
+                return [$accessRead => explode(',', $authItems)];
             default:
                 throw new UnsupportedDbException('This database is not being supported yet');
         }
