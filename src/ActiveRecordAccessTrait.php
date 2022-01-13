@@ -278,8 +278,8 @@ trait ActiveRecordAccessTrait
         }
 
         // return first found permission
-        $AuthManager = \Yii::$app->authManager;
-        $permissions = $AuthManager->getPermissionsByUser(Yii::$app->user->id);
+        $authManager = \Yii::$app->authManager;
+        $permissions = $authManager->getPermissions();
         foreach ($permissions as $name => $Permission) {
             if (StringHelper::startsWith($name, 'access.defaults.updateDelete:')) {
                 $data = explode(':', $name);
@@ -287,9 +287,12 @@ trait ActiveRecordAccessTrait
                     Yii::warning("Invalid update/delete access permission '$name'", __METHOD__);
                     continue;
                 }
-                return $data[1];
+                if (Yii::$app->user->can($data[1])) {
+                    return $data[1];
+                }
             }
         }
+        return null;
     }
 
 
