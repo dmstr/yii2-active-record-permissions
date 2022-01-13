@@ -206,13 +206,17 @@ trait ActiveRecordAccessTrait
                 $authItems = [];
 
                 $allRoles = $authManager->getRoles();
-                if (static::$enableRecursiveRoles === false) {
+
+                if (!static::isEnabledRecursiveRoles()) {
                     if (Yii::$app->user->can('Admin')) {
+                        // when user is 'Admin' use all roles
                         $roles = $allRoles;
                     } else {
+                        // only use directly assigned roles
                         $roles = $authManager->getRolesByUser(Yii::$app->user->id);
                     }
                 } else {
+                    // check all roles
                     $roles = [];
                     foreach ($allRoles as $roleItem) {
                         $roleName = $roleItem->name;
@@ -237,6 +241,12 @@ trait ActiveRecordAccessTrait
         return $publicAuthItem;
     }
 
+    /**
+     * @return bool|mixed
+     */
+    public static function isEnabledRecursiveRoles () {
+        return Yii::$app->params['ActiveRecordAccessTrait']['enableRecursiveRoles'] ?? static::$enableRecursiveRoles;
+    }
 
     public static function getDefaultAccessDomain() {
         // return first found permission
@@ -268,8 +278,8 @@ trait ActiveRecordAccessTrait
         }
 
         // return first found permission
-        $AuthManager = \Yii::$app->authManager;
-        $permissions = $AuthManager->getPermissionsByUser(Yii::$app->user->id);
+        $authManager = \Yii::$app->authManager;
+        $permissions = $authManager->getPermissions();
         foreach ($permissions as $name => $Permission) {
             if (StringHelper::startsWith($name, 'access.defaults.updateDelete:')) {
                 $data = explode(':', $name);
@@ -277,9 +287,12 @@ trait ActiveRecordAccessTrait
                     Yii::warning("Invalid update/delete access permission '$name'", __METHOD__);
                     continue;
                 }
-                return $data[1];
+                if (Yii::$app->user->can($data[1])) {
+                    return $data[1];
+                }
             }
         }
+        return null;
     }
 
 
