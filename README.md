@@ -10,7 +10,16 @@ The package has been extracted from https://github.com/dmstr/yii2-db
 
 ### Configuration options
 
-`enableRecursiveRoles`
+In application config:
+```
+    'params' => [
+        'ActiveRecordAccessTrait' => [
+            'enableRecursiveRoles' => true
+        ],
+    ],
+```
+
+> Note: Static property usage `enableRecursiveRoles` is deprecated.
 
 ### Example
 
