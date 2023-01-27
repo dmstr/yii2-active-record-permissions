@@ -65,8 +65,9 @@ class AccessInput extends Widget
      */
     public function optsAccessDomain()
     {
+        $modelClass = get_class($this->model);
         if (Yii::$app->user->can('access.availableDomains:any')) {
-            $availableLanguages[ActiveRecordAccessTrait::$_all] = 'GLOBAL';
+            $availableLanguages[$modelClass::$_all] = 'GLOBAL';
             foreach (\Yii::$app->urlManager->languages as $availablelanguage) {
                 $availableLanguages[mb_strtolower($availablelanguage)] = mb_strtolower($availablelanguage);
             }
