@@ -47,6 +47,22 @@ trait ActiveRecordAccessTrait
     public static $_all = '*';
 
     /**
+     * Role that can get/set all AuthItems, default 'Admin'
+     * can be defined via app::params
+     *
+     * @var string
+     */
+    public static $allAuthItemsRole = 'Admin';
+
+    /**
+     * Admin Role that returns true for all access checks, default 'Admin'
+     * can be defined via app::params
+     *
+     * @var string
+     */
+    public static $adminRole = 'Admin';
+
+    /**
      * @return array with access field names
      */
     public static function accessColumnAttributes()
@@ -71,7 +87,7 @@ trait ActiveRecordAccessTrait
         $query = parent::find();
 
         // disabled access behavior in console applications and for role 'Admin'
-        if (Yii::$app instanceof ConsoleApplication || Yii::$app->user->can('Admin')) {
+        if (Yii::$app instanceof ConsoleApplication || Yii::$app->user->can(self::getAdminRole())) {
             return $query;
         }
 
@@ -208,7 +224,7 @@ trait ActiveRecordAccessTrait
                 $allRoles = $authManager->getRoles();
 
                 if (!static::isEnabledRecursiveRoles()) {
-                    if (Yii::$app->user->can('Admin')) {
+                    if (Yii::$app->user->can(self::getAllAuthItemsRole())) {
                         // when user is 'Admin' use all roles
                         $roles = $allRoles;
                     } else {
@@ -239,6 +255,26 @@ trait ActiveRecordAccessTrait
         }
 
         return $publicAuthItem;
+    }
+
+    /**
+     * get allAuthItemsRole from $app->params or static property
+     *
+     * @return string
+     */
+    public static function getAllAuthItemsRole()
+    {
+        return Yii::$app->params['ActiveRecordAccessTrait']['allAuthItemsRole'] ?? static::$allAuthItemsRole;
+    }
+
+    /**
+     * get adminRole from $app->params or static property
+     *
+     * @return string
+     */
+    public static function getAdminRole()
+    {
+        return Yii::$app->params['ActiveRecordAccessTrait']['adminRole'] ?? static::$adminRole;
     }
 
     /**
@@ -344,7 +380,7 @@ trait ActiveRecordAccessTrait
         #}
 
         // always true for admins
-        if (\Yii::$app->user->can('Admin')) {
+        if (\Yii::$app->user->can(self::getAdminRole())) {
             return true;
         }
 
