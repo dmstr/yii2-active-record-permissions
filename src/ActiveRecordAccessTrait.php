@@ -223,21 +223,21 @@ trait ActiveRecordAccessTrait
 
                 $allRoles = $authManager->getRoles();
 
-                if (!static::isEnabledRecursiveRoles()) {
-                    if (Yii::$app->user->can(self::getAllAuthItemsRole())) {
-                        // when user is 'Admin' use all roles
-                        $roles = $allRoles;
-                    } else {
-                        // only use directly assigned roles
-                        $roles = $authManager->getRolesByUser(Yii::$app->user->id);
-                    }
+                // when user is 'Admin' use all roles
+                if (Yii::$app->user->can(self::getAllAuthItemsRole())) {
+                    $roles = $allRoles;
                 } else {
-                    // check all roles
-                    $roles = [];
-                    foreach ($allRoles as $roleItem) {
-                        $roleName = $roleItem->name;
-                        if (Yii::$app->user->can($roleName)) {
-                            $roles[$roleName] = $roleItem;
+                    if (!static::isEnabledRecursiveRoles()) {
+                        // only direct assigned roles
+                        $roles = $authManager->getRolesByUser(Yii::$app->user->id);
+                    } else {
+                        // check all roles
+                        $roles = [];
+                        foreach ($allRoles as $roleItem) {
+                            $roleName = $roleItem->name;
+                            if (Yii::$app->user->can($roleName)) {
+                                $roles[$roleName] = $roleItem;
+                            }
                         }
                     }
                 }
