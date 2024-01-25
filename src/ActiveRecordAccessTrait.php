@@ -315,6 +315,9 @@ trait ActiveRecordAccessTrait
 
         // return first found permission
         $authManager = \Yii::$app->authManager;
+        // maybe(tm) we should get only these permissions from the user?
+        // but then we MUST check that the user is logged in?
+        // $permissions = $authManager->getPermissionsByUser($user_id);
         $permissions = $authManager->getPermissions();
         foreach ($permissions as $name => $Permission) {
             if (StringHelper::startsWith($name, 'access.defaults.updateDelete:')) {
@@ -323,7 +326,7 @@ trait ActiveRecordAccessTrait
                     Yii::warning("Invalid update/delete access permission '$name'", __METHOD__);
                     continue;
                 }
-                if (Yii::$app->user->can($data[1])) {
+                if (Yii::$app->user->can($name)) {
                     return $data[1];
                 }
             }
