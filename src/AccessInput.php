@@ -52,7 +52,7 @@ class AccessInput extends Widget
             // Check if value set is in data list and add it if its not and disable the input
             if (!array_key_exists($vaule, $data)) {
                 $data[$vaule] = $vaule;
-                $disabled = true;
+                $disabled = !Yii::$app->getUser()->can($vaule); // Check if current user is able to modify the value
             }
 
             $return .= $this->form->field($this->model, $this->$fieldName)->widget(
