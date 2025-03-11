@@ -48,11 +48,11 @@ class AccessInput extends Widget
             $data = $access === 'domain' ? $userDomains : $userAuthItems;
             $fieldName = 'field' . ucfirst($access);
 
-            $vaule = $this->model->{$this->$fieldName};
+            $value = $this->model->{$this->$fieldName};
             // Check if value set is in data list and add it if its not and disable the input
-            if (!array_key_exists($vaule, $data)) {
-                $data[$vaule] = $vaule;
-                $disabled = !Yii::$app->getUser()->can($vaule); // Check if current user is able to modify the value
+            if (!array_key_exists($value, $data)) {
+                $data[$value] = $value;
+                $disabled = !Yii::$app->getUser()->can($value); // Check if current user is able to modify the value
             }
 
             $return .= $this->form->field($this->model, $this->$fieldName)->widget(
