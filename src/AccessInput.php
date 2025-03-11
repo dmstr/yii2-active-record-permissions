@@ -59,7 +59,7 @@ class AccessInput extends Widget
                 Select2::class,
                 [
                     'data' => $data,
-                    'options' => ['placeholder' => Yii::t('pages', 'Select ...')],
+                    'options' => ['placeholder' => Yii::t('app', 'Select ...')],
                     'pluginOptions' => [
                         'allowClear' => true,
                         'disabled' => $disabled
