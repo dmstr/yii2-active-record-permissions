@@ -9,8 +9,8 @@
 
 namespace dmstr\activeRecordPermissions;
 
-use Yii;
 use dmstr\db\exceptions\UnsupportedDbException;
+use Yii;
 use yii\console\Application as ConsoleApplication;
 use yii\helpers\StringHelper;
 
@@ -24,24 +24,28 @@ trait ActiveRecordAccessTrait
 {
     /**
      * Use session flash messages
+     *
      * @var bool
      */
     public static $enableFlashMessages = true;
 
     /**
      * Active find, beforeSave, beforeDelete
+     *
      * @var bool
      */
     public static $activeAccessTrait = true;
 
     /**
      * Enable/disable recursive role check
+     *
      * @var bool
      */
     public static $enableRecursiveRoles = false;
 
     /**
      * Public / all access
+     *
      * @var string
      */
     public static $_all = '*';
@@ -70,12 +74,22 @@ trait ActiveRecordAccessTrait
         // use prefix to avoid ambigious column names
         $prefix = self::getTableSchema()->name;
         return [
-            'owner'  => "{$prefix}.access_owner",
-            'read'   => "{$prefix}.access_read",
+            'owner' => "{$prefix}.access_owner",
+            'read' => "{$prefix}.access_read",
             'update' => "{$prefix}.access_update",
             'delete' => "{$prefix}.access_delete",
             'domain' => "{$prefix}.access_domain",
         ];
+    }
+
+    /**
+     * Method should be overwritten if the access_owner reference is different from the primary key of the user
+     * identity. User identity is already evaluated at this point, which means that this method is not or should not be
+     * called at any time if the user is a guest.
+     */
+    protected static function currentUserId(): string
+    {
+        return (string)Yii::$app->getUser()->getId();
     }
 
     /**
@@ -91,8 +105,8 @@ trait ActiveRecordAccessTrait
             return $query;
         }
 
-        $accessOwner  = self::accessColumnAttributes()['owner'];
-        $accessRead   = self::accessColumnAttributes()['read'];
+        $accessOwner = self::accessColumnAttributes()['owner'];
+        $accessRead = self::accessColumnAttributes()['read'];
         $accessDomain = self::accessColumnAttributes()['domain'];
 
         if (self::$activeAccessTrait) {
@@ -101,7 +115,7 @@ trait ActiveRecordAccessTrait
             $accessOwnerCheck = false;
             if ($accessOwner && !\Yii::$app->user->isGuest) {
                 $accessOwnerCheck = true;
-                $query->where([$accessOwner => (string)Yii::$app->user->id]);
+                $query->where([$accessOwner => static::currentUserId()]);
             }
 
             // access read check
@@ -138,7 +152,7 @@ trait ActiveRecordAccessTrait
                     // INSERT record: return true for new records
                     $accessOwner = self::accessColumnAttributes()['owner'];
                     if ($accessOwner && !\Yii::$app->user->isGuest) {
-                        $this->{$this->getSchemaProperty($accessOwner)} = \Yii::$app->user->id;
+                        $this->{$this->getSchemaProperty($accessOwner)} = static::currentUserId();
                     }
                 } else {
 
@@ -201,6 +215,7 @@ trait ActiveRecordAccessTrait
 
     /**
      * Returns roles *assigned* to current user or all roles for admin
+     *
      * @return array with item names
      */
     public static function getUsersAuthItems()
@@ -280,11 +295,13 @@ trait ActiveRecordAccessTrait
     /**
      * @return bool|mixed
      */
-    public static function isEnabledRecursiveRoles () {
+    public static function isEnabledRecursiveRoles()
+    {
         return Yii::$app->params['ActiveRecordAccessTrait']['enableRecursiveRoles'] ?? static::$enableRecursiveRoles;
     }
 
-    public static function getDefaultAccessDomain() {
+    public static function getDefaultAccessDomain()
+    {
         // return first found permission
         $AuthManager = \Yii::$app->authManager;
         $permissions = $AuthManager->getPermissionsByUser(Yii::$app->user->id);
@@ -306,7 +323,8 @@ trait ActiveRecordAccessTrait
     /**
      * @return null,string default access permission for user
      */
-    public static function getDefaultAccessUpdateDelete() {
+    public static function getDefaultAccessUpdateDelete()
+    {
 
         // allow setting `null` for eg. Admins
         if (Yii::$app->user->can('access.defaults.updateDelete:null')) {
@@ -354,6 +372,7 @@ trait ActiveRecordAccessTrait
 
     /**
      * Encode access column by action from csv to array
+     *
      * @param $action
      *
      * @return array|null
@@ -388,15 +407,15 @@ trait ActiveRecordAccessTrait
         }
 
         // owner check (has all permissions)
-        $accessOwner  = self::accessColumnAttributes()['owner'];
+        $accessOwner = self::accessColumnAttributes()['owner'];
         if ($accessOwner) {
-            if (!\Yii::$app->user->isGuest && $this->getOldAttribute($this->getSchemaProperty($accessOwner)) == \Yii::$app->user->id) {
+            if (!\Yii::$app->user->isGuest && $this->getOldAttribute($this->getSchemaProperty($accessOwner)) == static::currentUserId()) {
                 return true;
             }
         }
 
         // allow, if permission is "*"
-        $column =  $this->getSchemaProperty($action);
+        $column = $this->getSchemaProperty($action);
         if ($this->getOldAttribute($column) === self::$_all) {
             return true;
         }
@@ -431,14 +450,16 @@ trait ActiveRecordAccessTrait
 
     /**
      * Return correct part of check in set  query for current DB
+     *
      * @param $accessRead
      * @param $authItems
+     *
      * @return string|array
      */
     private static function getInSetQueryPart($accessRead, $authItems)
     {
         $dbName = Yii::$app->db->getDriverName();
-        switch($dbName) {
+        switch ($dbName) {
             case 'mysql':
                 return 'FIND_IN_SET(' . $accessRead . ', "' . $authItems . '") > 0';
             case 'pgsql':
@@ -449,7 +470,8 @@ trait ActiveRecordAccessTrait
     }
 
     // extract property from table name with schema
-    private function getSchemaProperty($schemaProperty){
+    private function getSchemaProperty($schemaProperty)
+    {
         // extract property from table name with schema
         if (strstr($schemaProperty, '.')) {
             $prop = substr($schemaProperty, strrpos($schemaProperty, '.') + 1);
