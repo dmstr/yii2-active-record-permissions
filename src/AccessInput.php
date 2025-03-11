@@ -42,9 +42,6 @@ class AccessInput extends Widget
             ->textInput(['readonly' => true]); // TODO: Check owner in model (has to be the same as current user)
 
         foreach (['domain', 'read', 'update', 'delete'] as $access) {
-            // save the current value in disabled because we may rewrite it if value is not in data
-            $originalDisabled = $disabled;
-
             $data = $access === 'domain' ? $userDomains : $userAuthItems;
             $fieldName = 'field' . ucfirst($access);
 
@@ -52,7 +49,6 @@ class AccessInput extends Widget
             // Check if value set is in data list and add it if its not and disable the input
             if (!array_key_exists($value, $data)) {
                 $data[$value] = $value;
-                $disabled = !Yii::$app->getUser()->can($value); // Check if current user is able to modify the value
             }
 
             $return .= $this->form->field($this->model, $this->$fieldName)->widget(
@@ -66,9 +62,6 @@ class AccessInput extends Widget
                     ]
                 ]
             );
-
-            // Reset disabled value if reset from value exists check
-            $disabled = $originalDisabled;
         }
         return $return;
     }
