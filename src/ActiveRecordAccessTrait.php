@@ -290,7 +290,7 @@ trait ActiveRecordAccessTrait
     /**
      * @return bool|mixed
      */
-    public static function isEnabledRecursiveRoles() {
+    public static function isEnabledRecursiveRoles () {
         return Yii::$app->params['ActiveRecordAccessTrait']['enableRecursiveRoles'] ?? static::$enableRecursiveRoles;
     }
 
@@ -347,6 +347,7 @@ trait ActiveRecordAccessTrait
 
     /**
      * Decode access column by action from csv to array
+     *
      * @param string $action
      * @param array $authItems
      *
@@ -363,7 +364,6 @@ trait ActiveRecordAccessTrait
 
     /**
      * Encode access column by action from csv to array
-     *
      * @param $action
      *
      * @return array|null
