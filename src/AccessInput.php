@@ -46,9 +46,9 @@ class AccessInput extends Widget
             $fieldName = 'field' . ucfirst($access);
 
             $value = $this->model->{$this->$fieldName};
-            // Check if value set is in data list and add it if its not and disable the input
+            // Check if value set is in data list and add it if its not
             if (!array_key_exists($value, $data)) {
-                $data[$value] = $value;
+                $data[$value] = Yii::t('app', '{roleName}*', ['roleName' => $value]);
             }
 
             $return .= $this->form->field($this->model, $this->$fieldName)->widget(
@@ -62,6 +62,7 @@ class AccessInput extends Widget
                     ]
                 ]
             );
+
         }
         return $return;
     }
