@@ -42,19 +42,33 @@ class AccessInput extends Widget
             ->textInput(['readonly' => true]); // TODO: Check owner in model (has to be the same as current user)
 
         foreach (['domain', 'read', 'update', 'delete'] as $access) {
+            // save the current value in disabled because we may rewrite it if value is not in data
+            $originalDisabled = $disabled;
+
+            $data = $access === 'domain' ? $userDomains : $userAuthItems;
             $fieldName = 'field' . ucfirst($access);
-            $return .= $this->form->field($this->model, $this->{$fieldName})->widget(
-                Select2::classname(),
+
+            $vaule = $this->model->{$this->$fieldName};
+            // Check if value set is in data list and add it if its not and disable the input
+            if (!array_key_exists($vaule, $data)) {
+                $data[$vaule] = $vaule;
+                $disabled = true;
+            }
+
+            $return .= $this->form->field($this->model, $this->$fieldName)->widget(
+                Select2::class,
                 [
-                    'data' => $access === 'domain' ? $userDomains : $userAuthItems,
+                    'data' => $data,
                     'options' => ['placeholder' => Yii::t('pages', 'Select ...')],
                     'pluginOptions' => [
                         'allowClear' => true,
-                        'disabled' => $disabled,
-                    ],
+                        'disabled' => $disabled
+                    ]
                 ]
             );
 
+            // Reset disabled value if reset from value exists check
+            $disabled = $originalDisabled;
         }
         return $return;
     }
@@ -68,7 +82,7 @@ class AccessInput extends Widget
         $modelClass = get_class($this->model);
         if (Yii::$app->user->can('access.availableDomains:any')) {
             $availableLanguages[$modelClass::$_all] = 'GLOBAL';
-            foreach (\Yii::$app->urlManager->languages as $availablelanguage) {
+            foreach (Yii::$app->urlManager->languages as $availablelanguage) {
                 $availableLanguages[mb_strtolower($availablelanguage)] = mb_strtolower($availablelanguage);
             }
         } else {
