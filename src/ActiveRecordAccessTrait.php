@@ -79,6 +79,16 @@ trait ActiveRecordAccessTrait
     }
 
     /**
+     * Method should be overwritten if the access_owner reference is different from the primary key of the user
+     * identity. User identity is already evaluated at this point, which means that this method is not or should not be
+     * called at any time if the user is a guest.
+     */
+    protected static function currentUserId(): string
+    {
+        return (string)Yii::$app->getUser()->getId();
+    }
+
+    /**
      * @inheritdoc
      */
     public static function find()
@@ -101,7 +111,7 @@ trait ActiveRecordAccessTrait
             $accessOwnerCheck = false;
             if ($accessOwner && !\Yii::$app->user->isGuest) {
                 $accessOwnerCheck = true;
-                $query->where([$accessOwner => (string)Yii::$app->user->id]);
+                $query->where([$accessOwner => static::currentUserId()]);
             }
 
             // access read check
@@ -138,7 +148,7 @@ trait ActiveRecordAccessTrait
                     // INSERT record: return true for new records
                     $accessOwner = self::accessColumnAttributes()['owner'];
                     if ($accessOwner && !\Yii::$app->user->isGuest) {
-                        $this->{$this->getSchemaProperty($accessOwner)} = \Yii::$app->user->id;
+                        $this->{$this->getSchemaProperty($accessOwner)} = static::currentUserId();
                     }
                 } else {
 
@@ -390,7 +400,7 @@ trait ActiveRecordAccessTrait
         // owner check (has all permissions)
         $accessOwner  = self::accessColumnAttributes()['owner'];
         if ($accessOwner) {
-            if (!\Yii::$app->user->isGuest && $this->getOldAttribute($this->getSchemaProperty($accessOwner)) == \Yii::$app->user->id) {
+            if (!\Yii::$app->user->isGuest && $this->getOldAttribute($this->getSchemaProperty($accessOwner)) == static::currentUserId()) {
                 return true;
             }
         }
