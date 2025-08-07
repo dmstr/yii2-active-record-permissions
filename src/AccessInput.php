@@ -19,6 +19,7 @@ use Yii;
 class AccessInput extends Widget
 {
     public $form;
+    /** @var \yii\db\ActiveRecord */
     public $model;
 
     public $accessFields = ['owner', 'domain', 'read', 'update', 'delete'];
@@ -35,11 +36,12 @@ class AccessInput extends Widget
         $return = '';
         $userAuthItems = $this->model::getUsersAuthItems();
         $userDomains = $this->optsAccessDomain();
-        $disabled = !$this->model->hasPermission('access_update');
 
         $return .= $this->form
             ->field($this->model, $this->fieldOwner)
             ->textInput(['readonly' => true]); // TODO: Check owner in model (has to be the same as current user)
+
+        $disabled = !$this->model->hasPermission($this->fieldUpdate);
 
         foreach (['domain', 'read', 'update', 'delete'] as $access) {
             $data = $access === 'domain' ? $userDomains : $userAuthItems;
@@ -50,6 +52,17 @@ class AccessInput extends Widget
             if (!array_key_exists($value, $data)) {
                 $data[$value] = Yii::t('app', '{roleName}*', ['roleName' => $value]);
             }
+
+            if ($fieldName === 'fieldDelete' && !empty($this->model->{$this->$fieldName})) {
+                $disabled = !$this->model->hasPermission($this->fieldDelete);
+            }
+//            if ($this->model->getIsNewRecord() || empty($value) || $value === '*') {
+//                Yii::debug('nr || empty || *');
+//                $disabled = false;
+//            } else {
+//                Yii::debug($value);
+//                $disabled = !$this->model->hasPermission($value);
+//            }
 
             $return .= $this->form->field($this->model, $this->$fieldName)->widget(
                 Select2::class,
