@@ -465,8 +465,8 @@ trait ActiveRecordAccessTrait
     // extract property from table name with schema
     private function getSchemaProperty($schemaProperty){
         // extract property from table name with schema
-        if (strstr($schemaProperty, '.')) {
-            $prop = substr($schemaProperty, strrpos($schemaProperty, '.') + 1);
+        if (strstr((string)$schemaProperty, '.')) {
+            $prop = substr((string)$schemaProperty, strrpos((string)$schemaProperty, '.') + 1);
         } else {
             $prop = $schemaProperty;
         }
