@@ -42,16 +42,24 @@ class AccessInput extends Widget
             ->textInput(['readonly' => true]); // TODO: Check owner in model (has to be the same as current user)
 
         foreach (['domain', 'read', 'update', 'delete'] as $access) {
+            $data = $access === 'domain' ? $userDomains : $userAuthItems;
             $fieldName = 'field' . ucfirst($access);
-            $return .= $this->form->field($this->model, $this->{$fieldName})->widget(
-                Select2::classname(),
+
+            $value = $this->model->{$this->$fieldName};
+            // Check if value set is in data list and add it if its not
+            if (!array_key_exists($value, $data)) {
+                $data[$value] = Yii::t('app', '{roleName}*', ['roleName' => $value]);
+            }
+
+            $return .= $this->form->field($this->model, $this->$fieldName)->widget(
+                Select2::class,
                 [
-                    'data' => $access === 'domain' ? $userDomains : $userAuthItems,
-                    'options' => ['placeholder' => Yii::t('pages', 'Select ...')],
+                    'data' => $data,
+                    'options' => ['placeholder' => Yii::t('app', 'Select ...')],
                     'pluginOptions' => [
                         'allowClear' => true,
-                        'disabled' => $disabled,
-                    ],
+                        'disabled' => $disabled
+                    ]
                 ]
             );
 
@@ -68,7 +76,7 @@ class AccessInput extends Widget
         $modelClass = get_class($this->model);
         if (Yii::$app->user->can('access.availableDomains:any')) {
             $availableLanguages[$modelClass::$_all] = 'GLOBAL';
-            foreach (\Yii::$app->urlManager->languages as $availablelanguage) {
+            foreach (Yii::$app->urlManager->languages as $availablelanguage) {
                 $availableLanguages[mb_strtolower($availablelanguage)] = mb_strtolower($availablelanguage);
             }
         } else {
