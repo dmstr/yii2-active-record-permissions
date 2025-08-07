@@ -56,13 +56,6 @@ class AccessInput extends Widget
             if ($fieldName === 'fieldDelete' && !empty($this->model->{$this->$fieldName})) {
                 $disabled = !$this->model->hasPermission($this->fieldDelete);
             }
-//            if ($this->model->getIsNewRecord() || empty($value) || $value === '*') {
-//                Yii::debug('nr || empty || *');
-//                $disabled = false;
-//            } else {
-//                Yii::debug($value);
-//                $disabled = !$this->model->hasPermission($value);
-//            }
 
             $return .= $this->form->field($this->model, $this->$fieldName)->widget(
                 Select2::class,
