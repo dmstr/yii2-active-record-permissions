@@ -254,7 +254,11 @@ trait ActiveRecordAccessTrait
 
 
                 foreach ($roles as $name => $item) {
-                    $authItems[$name] = $name . ' (' . $item->description . ')';
+                    $label = $name;
+                    if ($item->description) {
+                        $label .= ' (' . $item->description . ')';
+                    }
+                    $authItems[$name] =$label;
                 }
 
                 $items = array_merge($publicAuthItem, $authItems);
