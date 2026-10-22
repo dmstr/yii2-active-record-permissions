@@ -50,7 +50,8 @@ class AccessInput extends Widget
 
             $value = $this->model->{$this->$fieldName};
             // Check if value set is in data list and add it if its not
-            if (!array_key_exists($value, $data)) {
+            // (skip null on new records, PHP 8.5 deprecates null as array key)
+            if ($value !== null && !array_key_exists($value, $data)) {
                 $data[$value] = Yii::t('app', '{roleName}*', ['roleName' => $value]);
             }
 
