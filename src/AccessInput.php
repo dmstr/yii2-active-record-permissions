@@ -1,4 +1,5 @@
 <?php
+// file generated with AI assistance: Claude Code - 2026-10-22 12:30:00 UTC
 /**
  * Created by PhpStorm.
  * User: schmunk
@@ -87,7 +88,8 @@ class AccessInput extends Widget
             }
         } else {
             // allow current value
-            $availableLanguages[$this->model->access_domain] = $this->model->access_domain;
+            // PHP 8.5 deprecates null as array offset, use '' as PHP did implicitly before
+            $availableLanguages[$this->model->access_domain ?? ''] = $this->model->access_domain;
             $availableLanguages[Yii::$app->language] = Yii::$app->language;
         }
         return $availableLanguages;
