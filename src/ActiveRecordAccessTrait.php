@@ -416,7 +416,9 @@ trait ActiveRecordAccessTrait
         }
 
         // check assigned permissions
-        return Yii::$app->user->can($this->getOldAttribute($column));
+        // (empty value or new record grants nothing, PHP 8.5 deprecates null as array offset in can())
+        $permission = $this->getOldAttribute($column);
+        return $permission !== null && Yii::$app->user->can($permission);
     }
 
     /**
