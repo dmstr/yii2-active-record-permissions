@@ -1,4 +1,5 @@
 <?php
+// file generated with AI assistance: Claude Code - 2026-11-24 14:23:35 UTC
 /**
  * @link http://www.diemeisterei.de/
  * @copyright Copyright (c) 2016 diemeisterei GmbH, Stuttgart
@@ -221,7 +222,7 @@ trait ActiveRecordAccessTrait
         $publicAuthItem = self::allAccess();
 
 
-        if (\Yii::$app instanceof yii\web\Application) {
+        if (\Yii::$app instanceof \yii\web\Application) {
 
             if (!$items) {
 
