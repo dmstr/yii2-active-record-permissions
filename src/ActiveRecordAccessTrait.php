@@ -1,4 +1,5 @@
 <?php
+// file generated with AI assistance: Claude Code - 2026-11-24 14:23:35 UTC
 /**
  * @link http://www.diemeisterei.de/
  * @copyright Copyright (c) 2016 diemeisterei GmbH, Stuttgart
@@ -377,7 +378,8 @@ trait ActiveRecordAccessTrait
         if (!in_array($action, self::accessColumnAttributes())) {
             return null;
         }
-        $arr = explode(',', $this->$action);
+        // cast null to string as PHP did implicitly before, null in explode() is deprecated since PHP 8.1
+        $arr = explode(',', (string)$this->$action);
         return array_combine($arr, $arr);
     }
 
