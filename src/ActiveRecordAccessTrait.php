@@ -154,7 +154,7 @@ trait ActiveRecordAccessTrait
 
                     // skip check if model has no changes
                     if (empty($this->getDirtyAttributes())) {
-                        Yii::trace('Model has no changes, skipping permission check', __METHOD__);
+                        Yii::debug('Model has no changes, skipping permission check', __METHOD__);
                         return true;
                     }
 
@@ -225,7 +225,7 @@ trait ActiveRecordAccessTrait
 
             if (!$items) {
 
-                \Yii::trace("Get and check UsersAuthItems", __METHOD__);
+                \Yii::debug("Get and check UsersAuthItems", __METHOD__);
 
                 // auth manager
                 $authManager = \Yii::$app->authManager;
@@ -377,7 +377,7 @@ trait ActiveRecordAccessTrait
         if (!in_array($action, self::accessColumnAttributes())) {
             return null;
         }
-        $arr = explode(',', $this->$action);
+        $arr = explode(',', (string) $this->$action);
         return array_combine($arr, $arr);
     }
 
