@@ -378,7 +378,8 @@ trait ActiveRecordAccessTrait
         if (!in_array($action, self::accessColumnAttributes())) {
             return null;
         }
-        $arr = explode(',', (string) $this->$action);
+        // cast null to string as PHP did implicitly before, null in explode() is deprecated since PHP 8.1
+        $arr = explode(',', (string)$this->$action);
         return array_combine($arr, $arr);
     }
 
